@@ -1,0 +1,15 @@
+{
+  "name": "tbs-protocol",
+  "version": "1.0.0",
+  "description": "my protobuf protocol encode and decode",
+  "main": "protocol.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "rockyf",
+  "license": "ISC",
+  "dependencies": {
+    "bytebuffer": "^5.0.1",
+    "protobufjs": "^6.8.0"
+  }
+}
