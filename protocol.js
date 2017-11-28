@@ -17,12 +17,16 @@ exports.initWithConfig = function ({protoSource, protoFile, protoIDMap}) {
 	}
 }
 
-exports.encode = function (messageName, message, cid) {
+exports.encode = function (messageName, message, cid = 0) {
 	let pid = _protoIDMap[messageName];
 
 	let pkgBuffer = new ByteBuffer();
 	pkgBuffer.writeUint16(pid);
 	pkgBuffer.writeUint32(cid, 2);
+
+	if(!message){
+		return false;
+	}
 
 	let pkgData = protobuf.encode({messageName, message});
 
