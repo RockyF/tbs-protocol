@@ -17,24 +17,29 @@ exports.initWithConfig = function ({protoSource, protoFile, protoIDMap}) {
 	}
 }
 
-exports.encode = function (messageName, message, cid = 0) {
-	let pid = _protoIDMap[messageName];
-
-	let pkgBuffer = new ByteBuffer();
-	pkgBuffer.writeUint16(pid);
-	pkgBuffer.writeUint32(cid, 2);
-
+exports.encode = function (messageName, message, cid = 0, eid = 0) {
 	if(!message){
 		return false;
 	}
 
+	let pid = _protoIDMap[messageName];
+
 	let pkgData = protobuf.encode({messageName, message});
+	pkgData.offset = 0;
+
+	let pkgBuffer = new ByteBuffer(pkgData.length + 10);
+	pkgBuffer.writeUint16(pid);
+	pkgBuffer.writeUint32(cid);
+	pkgBuffer.writeUint32(eid);
 
 	if (pkgData) {
-		pkgBuffer = ByteBuffer.concat([pkgBuffer, pkgData], pkgBuffer.limit + pkgData.length);
+		pkgBuffer.append(pkgData);
+		//pkgBuffer = ByteBuffer.concat([pkgBuffer, pkgData]);
 	} else {
 		return false;
 	}
+
+	pkgBuffer.offset = 0;
 
 	return {
 		pid,
@@ -54,9 +59,9 @@ exports.decode = function (bytes) {
 	let messageName = _protoIDMap[pid];
 
 	let message;
-	if (buffer.limit > 12) {
-		let pkgData = new Uint8Array(buffer.slice(10, buffer.limit).toBuffer());
-		message = protobuf.decode({messageName, bytes: pkgData});
+	if (buffer.limit > 10) {
+		buffer.offset = 10;
+		message = protobuf.decode({messageName, bytes: new Uint8Array(buffer.toBuffer())});
 
 		if (!message) {
 			console.warn(`message named ${messageName} can't be decode`);

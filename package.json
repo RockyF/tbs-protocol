@@ -1,6 +1,6 @@
 {
   "name": "tbs-protocol",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "my protobuf protocol encode and decode",
   "main": "protocol.js",
   "scripts": {
