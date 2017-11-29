@@ -38,13 +38,13 @@ exports.initWithProtoFile = function (protoFile) {
 	);
 }
 
-exports.encode = function ({messageName, data}) {
+exports.encode = function ({messageName, message}) {
 	let proto = getProto(messageName);
 	if (!proto) {
 		return;
 	}
 
-	return proto.encode(data).finish();
+	return proto.encode(message).finish();
 }
 
 exports.decode = function ({messageName, bytes}) {
