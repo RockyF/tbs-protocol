@@ -7,18 +7,23 @@ const protobuf = require('./Protobuf');
 
 let _protoIDMap;
 
-exports.initWithConfig = function ({protoSource, protoFile, protoIDMap}) {
+exports.initWithConfig = function ({protoSchemas, protoIDMap}) {
 	_protoIDMap = protoIDMap;
 
-	if (protoSource) {
-		return protobuf.initWithProtoSource(protoSource);
-	} else {
-		return protobuf.initWithProtoFile(protoFile);
-	}
+	return Promise.all(
+		protoSchemas.map(protoSchema => {
+			let {packageName} = protoSchema;
+			if(protoSchema.hasOwnProperty('protoSource')){
+				return protobuf.addProtoSource(packageName, protoSchema.protoSource);
+			}else{
+				return protobuf.addProtoFile(packageName, protoSchema.protoFile);
+			}
+		})
+	);
 }
 
 exports.encode = function (messageName, message, cid = 0, eid = 0) {
-	if(!message){
+	if (!message) {
 		return false;
 	}
 
